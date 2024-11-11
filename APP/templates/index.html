@@ -49,6 +49,14 @@
                     <span>Dashboard</span></a>
             </li>
 
+            <hr class="sidebar-divider my-0">
+
+            <li class="nav-item active">
+                <a class="nav-link" href="irrigation.html">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Irrigation</span></a>
+            </li>
+
             <!-- Divider -->
             <hr class="sidebar-divider">
 
@@ -128,11 +136,11 @@
 
                     <!-- Earnings (Monthly) Card Example -->
                     <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card border-left-info shadow h-100 py-2">
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Umidade
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Umidade
                                             do Solo (Atual)</div>
                                         <div id="soil_humidity" class="h5 mb-0 font-weight-bold text-gray-800"></div>
                                     </div>
@@ -149,12 +157,12 @@
                         <!-- Page Heading -->
                         <div class="d-sm-flex align-items-center justify-content-between mb-4">
                             <h1 class="h3 mb-0 text-gray-800"> Desejavel </h1>
-                            <a id="sensorForm" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"> Envio </a>
+                            <a id="sendFormData" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"> Envio </a>
                         </div>
                         <!-- Content Row -->
                         <div class="row">
 
-                            <form class="row" id="sensorForm">
+                            <form class="row" id="sendDataSensorForm">
                                 <!-- Earnings (Monthly) Card Example -->
                                 <div class="col-xl-3 col-md-6 mb-4">
                                     <div class="card border-left-primary shadow h-100 py-2">
@@ -165,6 +173,10 @@
                                                         class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                         Temperatura (Desejavel)</div>
                                                     <div class="h5 mb-0 font-weight-bold text-gray-800"><input type="text" id="tempDesirable" oninput="validarNumero(event)"></div>
+                                                </div>
+                                                <div class="mt-2">
+                                                    <span class="text-xs font-weight-bold text-primary text-uppercase mb-1">Valor Atual: </span>
+                                                    <span id="tempDesirableCurrent" class="h6 mb-0 font-weight-bold text-gray-800">N/A</span>
                                                 </div>
                                                 <div class="col-auto">
                                                 </div>
@@ -185,6 +197,10 @@
                                                     <div class="h5 mb-0 font-weight-bold text-gray-800"><input
                                                             type="text" id="airHumidityDesirable" oninput="validarNumero(event)"></div>
                                                 </div>
+                                                <div class="mt-2">
+                                                    <span class="text-xs font-weight-bold text-success text-uppercase mb-1">Valor Atual: </span>
+                                                    <span id="airHumidityDesirableCurrent" class="h6 mb-0 font-weight-bold text-gray-800">N/A</span>
+                                                </div>
                                                 <div class="col-auto">
                                                 </div>
                                             </div>
@@ -202,9 +218,13 @@
                                                     <div
                                                         class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                                         Co2 (Desejavel)</div>
-                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                        <input type="text" id="co2Desirable" oninput="validarNumero(event)">
-                                                    </div>
+																										
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800"><input type="text" id="co2Desirable" oninput="validarNumero(event)"></div>
+                                                </div>
+                                                <div class="mt-2">
+                                                    <span class="text-xs font-weight-bold text-success text-uppercase mb-1">Valor Atual: </span>
+                                                    <span id="co2Current" class="h6 mb-0 font-weight-bold text-gray-800">N/A</span>
+														  
                                                 </div>
                                                 <div class="col-auto">
                                                 </div>
@@ -219,17 +239,14 @@
                                         <div class="card-body">
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col mr-2">
-                                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                                        Umidade do Solo (Desejavel)
-                                                    </div>
-                                                    <div class="row no-gutters align-items-center">
-                                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                            <input type="text" id="soilMoistureDesirable" oninput="validarNumero(event)">
-                                                        </div>
-                                                        <div class="col">
-
-                                                        </div>
-                                                    </div>
+                                                    <div
+                                                        class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                                        Umidade do Solo (Desejavel)</div>												
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800"><input type="text" id="soilMoistureDesirable" oninput="validarNumero(event)"></div>
+                                                </div>
+                                                <div class="mt-2">
+                                                    <span class="text-xs font-weight-bold text-info text-uppercase mb-1">Valor Atual: </span>
+                                                    <span id="soilMoistureDesirableCurrent" class="h6 mb-0 font-weight-bold text-gray-800">N/A</span>	  
                                                 </div>
                                                 <div class="col-auto">
 
@@ -247,6 +264,7 @@
                     <!-- End of Page Wrapper -->
 
                     <script src="{{ url_for('static', filename='home.js') }}"></script>
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
 
 </html>

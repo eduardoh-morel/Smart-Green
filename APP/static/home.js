@@ -14,6 +14,20 @@ async function fetchSensorData() {
 // Carregar os dados inicialmente
 fetchSensorData();
 
+function updateDesiredValues() {
+    fetch('/getValuesDesirable')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('tempDesirableCurrent').textContent = data.temperatura || "N/A";
+            document.getElementById('airHumidityDesirableCurrent').textContent = data.umidade || "N/A";
+            document.getElementById('co2Current').textContent = data.co2 || "N/A";
+            document.getElementById('soilMoistureDesirableCurrent').textContent = data.umidadeSolo || "N/A";
+        })
+        .catch(error => console.error('Erro ao carregar valores iniciais:', error));
+}
+
+document.addEventListener('DOMContentLoaded', updateDesiredValues);
+
 document.getElementById('refreshSensorData').addEventListener('click', async function(event) {
     event.preventDefault();
     fetchSensorData();
@@ -25,11 +39,16 @@ function validarNumero(event) {
     event.target.value = valor.replace(/[^0-9]/g, '');
 }
 
-document.getElementById('sensorForm').addEventListener('click', function() {
+document.getElementById('sendFormData').addEventListener('click', function() {
     var temperatura = document.getElementById('tempDesirable').value;
     var umidade = document.getElementById('airHumidityDesirable').value;
     var co2 = document.getElementById('co2Desirable').value;
     var umidadeSolo = document.getElementById('soilMoistureDesirable').value;
+
+    if (!temperatura || !umidade || !co2 || !umidadeSolo) {
+        alert("Por favor, preencha todos os campos antes de enviar.");
+        return; // Interrompe o envio se algum campo estiver vazio
+    }
 
     $.ajax({
         url: '/sendDesiredData',
@@ -41,8 +60,12 @@ document.getElementById('sensorForm').addEventListener('click', function() {
             umidadeSolo: umidadeSolo
         },
         success: function(response) {
-            console.log("Dados enviados com sucesso!");
-            console.log(response);
+            document.getElementById('tempDesirable').value = '';
+            document.getElementById('airHumidityDesirable').value = '';
+            document.getElementById('co2Desirable').value = '';
+            document.getElementById('soilMoistureDesirable').value = '';
+
+            updateDesiredValues();
         },
         error: function(xhr, status, error) {
             console.log("Erro ao enviar dados:", error);
