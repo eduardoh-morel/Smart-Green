@@ -49,6 +49,9 @@ document.addEventListener('DOMContentLoaded', function() {
     getatualizarStatusIrrigacao();
     atualizarListaAgendamentosIrrigacao();
     verificarExistenciaDeAgendamentos();
+    fetchSensorData();
+    updateDesiredValues();
+    statusIrrigacaoPorNecessidade();
 });
 
 document.getElementById('btnAgendarIrrigacao').addEventListener('click', function() {
@@ -153,6 +156,49 @@ function verificarExistenciaDeAgendamentos() {
         },
         error: function(error) {
             console.error('Erro ao verificar agendamentos:', error);
+        }
+    });
+}
+
+async function fetchSensorData() {
+    try {
+        const response = await fetch("/sensorData");
+        const data = await response.json();
+        
+        document.getElementById("temp").textContent = data.temperatura || "N/A";
+        document.getElementById("humidity").textContent = data.umidade || "N/A";
+        document.getElementById("co2").textContent = data.co2 || "N/A";
+        document.getElementById("soil_humidity").textContent = data.umidade_solo || "N/A";
+    } catch (error) {
+        console.error("Erro ao buscar dados do sensor:", error);
+    }
+}
+
+function updateDesiredValues() {
+    fetch('/getValuesDesirable')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('tempDesirableCurrent').textContent = data.temperatura || "N/A";
+            document.getElementById('airHumidityDesirableCurrent').textContent = data.umidade || "N/A";
+            document.getElementById('co2Current').textContent = data.co2 || "N/A";
+            document.getElementById('soilMoistureDesirableCurrent').textContent = data.umidadeSolo || "N/A";
+        })
+        .catch(error => console.error('Erro ao carregar valores iniciais:', error));
+}
+
+function statusIrrigacaoPorNecessidade() {
+    $.ajax({
+        url: '/IrrigationByNeed',
+        method: 'GET',
+        success: function(data) {
+            const status = data.status;  // Status vindo do backend
+            const color = status === 'Ligado' ? 'green' : 'red';  // Determina a cor baseada no status
+            document.getElementById('statusIndicatorByNeed').style.backgroundColor = color;
+            document.getElementById('statusIrrigacaoByNeed').style.color = color;
+            document.getElementById('statusIrrigacaoByNeed').textContent = status;
+        },
+        error: function(error) {
+            console.error('Erro ao buscar o status de irrigação:', error);
         }
     });
 }

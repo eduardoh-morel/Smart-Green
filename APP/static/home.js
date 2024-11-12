@@ -11,8 +11,6 @@ async function fetchSensorData() {
         console.error("Erro ao buscar dados do sensor:", error);
     }
 }
-// Carregar os dados inicialmente
-fetchSensorData();
 
 function updateDesiredValues() {
     fetch('/getValuesDesirable')
@@ -29,6 +27,7 @@ function updateDesiredValues() {
 document.addEventListener('DOMContentLoaded', function() {
     getatualizarStatusIrrigacao();
     updateDesiredValues();
+    fetchSensorData();
 });
 
 document.getElementById('refreshSensorData').addEventListener('click', async function(event) {

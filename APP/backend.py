@@ -25,6 +25,10 @@ statusIrrigation = {
     "status": "Desligado",
 }
 
+statusIrrigationByNeed = {
+    "status": "Desligado",
+}
+
 agendamentos = []
 
 @app.route('/agendarIrrigacao', methods=['POST'])
@@ -59,6 +63,7 @@ def remover_agendamento(index):
 lock = threading.Lock()
 
 def verificar_agendamentos():
+    print("###Iniciando verificação de Agendamentos###")
     while True:
         agora = datetime.now()
         for agendamento in agendamentos:
@@ -85,6 +90,10 @@ threading.Thread(target=verificar_agendamentos, daemon=True).start()
 @app.route('/hasSchedule', methods=['GET'])
 def has_schedule():
     return jsonify({"has_schedule": len(agendamentos) > 0}), 200
+
+@app.route('/IrrigationByNeed', methods=['GET'])
+def get_irrigation_by_need():
+    return jsonify(statusIrrigationByNeed), 200
 
 @app.route('/irrigationStatus', methods=['GET'])
 def get_irrigation_status():
