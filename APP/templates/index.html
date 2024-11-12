@@ -39,22 +39,23 @@
                 <div class="sidebar-brand-text mx-3">Smart Green</div>
             </a>
 
-            <!-- Divider -->
             <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
                 <a class="nav-link" href="GreenTech.html">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
-
             <hr class="sidebar-divider my-0">
-
             <li class="nav-item active">
                 <a class="nav-link" href="irrigation.html">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Irrigation</span></a>
+            </li>
+            <hr class="sidebar-divider my-0">
+            <li class="nav-item active">
+                <a class="nav-link" href="statistics.html">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Statistics</span></a>
             </li>
 
             <!-- Divider -->
@@ -157,7 +158,8 @@
                         <!-- Page Heading -->
                         <div class="d-sm-flex align-items-center justify-content-between mb-4">
                             <h1 class="h3 mb-0 text-gray-800"> Desejavel </h1>
-                            <a id="sendFormData" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"> Envio </a>
+                            <a id="sendFormData" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                                Envio </a>
                         </div>
                         <!-- Content Row -->
                         <div class="row">
@@ -172,11 +174,16 @@
                                                     <div
                                                         class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                         Temperatura (Desejavel)</div>
-                                                    <div class="h5 mb-0 font-weight-bold text-gray-800"><input type="text" id="tempDesirable" oninput="validarNumero(event)"></div>
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800"><input
+                                                            type="text" id="tempDesirable"
+                                                            oninput="validarNumero(event)"></div>
                                                 </div>
                                                 <div class="mt-2">
-                                                    <span class="text-xs font-weight-bold text-primary text-uppercase mb-1">Valor Atual: </span>
-                                                    <span id="tempDesirableCurrent" class="h6 mb-0 font-weight-bold text-gray-800">N/A</span>
+                                                    <span
+                                                        class="text-xs font-weight-bold text-primary text-uppercase mb-1">Valor
+                                                        Atual: </span>
+                                                    <span id="tempDesirableCurrent"
+                                                        class="h6 mb-0 font-weight-bold text-gray-800">N/A</span>
                                                 </div>
                                                 <div class="col-auto">
                                                 </div>
@@ -195,11 +202,15 @@
                                                         class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                                         Umidade Do Ar (Desejavel)</div>
                                                     <div class="h5 mb-0 font-weight-bold text-gray-800"><input
-                                                            type="text" id="airHumidityDesirable" oninput="validarNumero(event)"></div>
+                                                            type="text" id="airHumidityDesirable"
+                                                            oninput="validarNumero(event)"></div>
                                                 </div>
                                                 <div class="mt-2">
-                                                    <span class="text-xs font-weight-bold text-success text-uppercase mb-1">Valor Atual: </span>
-                                                    <span id="airHumidityDesirableCurrent" class="h6 mb-0 font-weight-bold text-gray-800">N/A</span>
+                                                    <span
+                                                        class="text-xs font-weight-bold text-success text-uppercase mb-1">Valor
+                                                        Atual: </span>
+                                                    <span id="airHumidityDesirableCurrent"
+                                                        class="h6 mb-0 font-weight-bold text-gray-800">N/A</span>
                                                 </div>
                                                 <div class="col-auto">
                                                 </div>
@@ -218,13 +229,18 @@
                                                     <div
                                                         class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                                         Co2 (Desejavel)</div>
-																										
-                                                    <div class="h5 mb-0 font-weight-bold text-gray-800"><input type="text" id="co2Desirable" oninput="validarNumero(event)"></div>
+
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800"><input
+                                                            type="text" id="co2Desirable"
+                                                            oninput="validarNumero(event)"></div>
                                                 </div>
                                                 <div class="mt-2">
-                                                    <span class="text-xs font-weight-bold text-success text-uppercase mb-1">Valor Atual: </span>
-                                                    <span id="co2Current" class="h6 mb-0 font-weight-bold text-gray-800">N/A</span>
-														  
+                                                    <span
+                                                        class="text-xs font-weight-bold text-success text-uppercase mb-1">Valor
+                                                        Atual: </span>
+                                                    <span id="co2Current"
+                                                        class="h6 mb-0 font-weight-bold text-gray-800">N/A</span>
+
                                                 </div>
                                                 <div class="col-auto">
                                                 </div>
@@ -239,14 +255,18 @@
                                         <div class="card-body">
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col mr-2">
-                                                    <div
-                                                        class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                                        Umidade do Solo (Desejavel)</div>												
-                                                    <div class="h5 mb-0 font-weight-bold text-gray-800"><input type="text" id="soilMoistureDesirable" oninput="validarNumero(event)"></div>
+                                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                                        Umidade do Solo (Desejavel)</div>
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800"><input
+                                                            type="text" id="soilMoistureDesirable"
+                                                            oninput="validarNumero(event)"></div>
                                                 </div>
                                                 <div class="mt-2">
-                                                    <span class="text-xs font-weight-bold text-info text-uppercase mb-1">Valor Atual: </span>
-                                                    <span id="soilMoistureDesirableCurrent" class="h6 mb-0 font-weight-bold text-gray-800">N/A</span>	  
+                                                    <span
+                                                        class="text-xs font-weight-bold text-info text-uppercase mb-1">Valor
+                                                        Atual: </span>
+                                                    <span id="soilMoistureDesirableCurrent"
+                                                        class="h6 mb-0 font-weight-bold text-gray-800">N/A</span>
                                                 </div>
                                                 <div class="col-auto">
 
@@ -262,6 +282,59 @@
 
                     </div>
                     <!-- End of Page Wrapper -->
+
+
+                    <div class="container-fluid">
+                        <!-- Page Heading -->
+                        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                            <h1 class="h3 mb-0 text-gray-800"> Status </h1>
+                        </div>
+
+                        <div class="row">
+                            <!-- Earnings (Monthly) Card Example -->
+                            <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="card border-left-primary shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                    Ventilação</div>
+                                                    <p class="mt-3">
+                                                        Status: 
+                                                        <span id="statusIndicator" style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; background-color: red;"></span>
+                                                        <span id="statusIrrigacao">Desligado</span>
+                                                    </p>
+                                            </div>
+                                            <div class="col-auto">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Earnings (Monthly) Card Example -->
+                            <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="card border-left-primary shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                    Irrigação</div>
+                                                    <p class="mt-3">
+                                                        Status: 
+                                                        <span id="statusIndicatorHome" style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px;"></span>
+                                                        <span id="statusIrrigacaoHome">Desligado</span>
+                                                    </p>
+                                            </div>
+                                            <div class="col-auto">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
 
                     <script src="{{ url_for('static', filename='home.js') }}"></script>
                     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

@@ -18,6 +18,26 @@ valores_desejaveis = {
     "umidadeSolo": ""   
 }
 
+statusIrrigation = {
+    "status": "Desligado",
+}
+
+@app.route('/irrigationStatus', methods=['GET'])
+def get_irrigation_status():
+    print(f"Estado atual da irrigação: {statusIrrigation}")
+    return jsonify(statusIrrigation), 200
+
+@app.route('/irrigationStatus', methods=['POST'])
+def update_irrigation_status():
+    data = request.get_json()
+    
+    # Verifica se o status foi enviado corretamente
+    if 'status' in data:
+        statusIrrigation['status'] = data['status']
+        return jsonify({"message": "Status da irrigação atualizado com sucesso!"}), 200
+    else:
+        return jsonify({"message": "Status não fornecido!"}), 400
+
 @app.route('/getValuesDesirable', methods=['GET'])
 def get_initial_values():
     return jsonify(valores_desejaveis), 200
@@ -34,29 +54,29 @@ def send_desired_data():
 
     return jsonify({"message": "Dados recebidos com sucesso!"}), 200
 
-#try:
-#    ser = serial.Serial(serial_port, baud_rate, timeout=1)
-#    print("Conexão estabelecida com o Arduino!")
-#except serial.SerialException:
-#    print("Não foi possível conectar ao Arduino.")
-#    ser = None
+try:
+    ser = serial.Serial(serial_port, baud_rate, timeout=1)
+    print("Conexão estabelecida com o Arduino!")
+except serial.SerialException:
+    print("Não foi possível conectar ao Arduino.")
+    ser = None
 
-#def read_sensor_data():
-#    global temperatura, umidade, co2, umidade_solo
-#    if ser and ser.in_waiting > 0:
-#        data = ser.readline().decode('utf-8').strip()
-#        
-#        if "Temperatura:" in data:
-#            temperatura = int(data.split(":")[1].strip())
-#            temperatura= str(temperatura) + " °C"
-#        elif "Umidade:" in data:
-#            umidade = int(data.split(":")[1].strip())
-#            umidade= str(umidade) + " %"
-#        elif "CO2:" in data:
-#            co2 = int(data.split(":")[1].strip())
-#            co2= str(co2) + " ppm"
-#        elif "Umidade do Solo:" in data:
-#            umidade_solo = int(data.split(":")[1].strip())
+def read_sensor_data():
+    global temperatura, umidade, co2, umidade_solo
+    if ser and ser.in_waiting > 0:
+        data = ser.readline().decode('utf-8').strip()
+        
+        if "Temperatura:" in data:
+            temperatura = int(data.split(":")[1].strip())
+            temperatura= str(temperatura) + " °C"
+        elif "Umidade:" in data:
+            umidade = int(data.split(":")[1].strip())
+            umidade= str(umidade) + " %"
+        elif "CO2:" in data:
+            co2 = int(data.split(":")[1].strip())
+            co2= str(co2) + " ppm"
+        elif "Umidade do Solo:" in data:
+            umidade_solo = int(data.split(":")[1].strip())
 
 @app.route("/")
 def home():
@@ -70,10 +90,14 @@ def irrigation():
 def home1():
     return render_template('index.html')
 
+@app.route("/statistics.html")
+def statistics():
+    return render_template('statistics.html')
+
 @app.route("/sensorData")
 def sensor_data():
     # Atualizar os dados do sensor antes de enviá-los
-#    read_sensor_data()
+    read_sensor_data()
     
     # Retornar os dados como JSON
     return jsonify({
@@ -84,4 +108,5 @@ def sensor_data():
     })
 
 if __name__ == '__main__':
-    app.run(host='192.168.5.46', port=8080)
+    app.run(host='10.1.24.200', port=8888)
+    

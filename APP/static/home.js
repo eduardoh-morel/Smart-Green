@@ -26,7 +26,10 @@ function updateDesiredValues() {
         .catch(error => console.error('Erro ao carregar valores iniciais:', error));
 }
 
-document.addEventListener('DOMContentLoaded', updateDesiredValues);
+document.addEventListener('DOMContentLoaded', function() {
+    getatualizarStatusIrrigacao();
+    updateDesiredValues();
+});
 
 document.getElementById('refreshSensorData').addEventListener('click', async function(event) {
     event.preventDefault();
@@ -72,3 +75,20 @@ document.getElementById('sendFormData').addEventListener('click', function() {
         }
     });
 });
+
+function getatualizarStatusIrrigacao() {
+    $.ajax({
+        url: '/irrigationStatus',
+        method: 'GET',
+        success: function(data) {
+            const status = data.status;
+            const color = status === 'Ligado' ? 'green' : 'red';
+            document.getElementById('statusIndicatorHome').style.backgroundColor = color;
+            document.getElementById('statusIrrigacaoHome').style.color = color;
+            document.getElementById('statusIrrigacaoHome').textContent = status;
+        },
+        error: function(error) {
+            console.error('Erro ao buscar o status de irrigação:', error);
+        }
+    });
+}

@@ -5,32 +5,51 @@ function atualizarUmidadeValor(valor) {
 
 // Funções para controle manual da irrigação
 document.getElementById('btnLigarIrrigacao').addEventListener('click', function() {
-    document.getElementById('statusIrrigacao').textContent = 'Ligado';
+    const status = 'Ligado';  // Status a ser enviado
+    postAtualizarStatusIrrigacao(status);  // Chama a função para atualizar o status
 });
 
 document.getElementById('btnDesligarIrrigacao').addEventListener('click', function() {
-    document.getElementById('statusIrrigacao').textContent = 'Desligado';
+    const status = 'Desligado';  // Status a ser enviado
+    postAtualizarStatusIrrigacao(status);  // Chama a função para atualizar o status
 });
 
-// Exemplo de inicialização do gráfico de histórico (com dados fictícios)
-const ctx = document.getElementById('graficoUmidadeSolo').getContext('2d');
-new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: ['1h', '2h', '3h', '4h', '5h', '6h'],
-        datasets: [{
-            label: 'Umidade do Solo (%)',
-            data: [45, 50, 55, 60, 65, 70],
-            backgroundColor: 'rgba(0, 123, 255, 0.2)',
-            borderColor: 'rgba(0, 123, 255, 1)',
-            borderWidth: 2,
-            fill: true
-        }]
-    },
-    options: {
-        scales: {
-            x: { title: { display: true, text: 'Tempo' } },
-            y: { title: { display: true, text: 'Umidade (%)' } }
+function getatualizarStatusIrrigacao() {
+    $.ajax({
+        url: '/irrigationStatus',
+        method: 'GET',
+        success: function(data) {
+            const status = data.status;  // Status vindo do backend
+            const color = status === 'Ligado' ? 'green' : 'red';  // Determina a cor baseada no status
+            document.getElementById('statusIndicator').style.backgroundColor = color;
+            document.getElementById('statusIrrigacao').style.color = color;
+            document.getElementById('statusIrrigacao').textContent = status;
+        },
+        error: function(error) {
+            console.error('Erro ao buscar o status de irrigação:', error);
         }
-    }
+    });
+}
+
+function postAtualizarStatusIrrigacao(status) {
+    $.ajax({
+        url: '/irrigationStatus',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ status: status }),
+        success: function(response) {
+            console.log("Status da irrigação atualizado:", response);
+            const color = status === 'Ligado' ? 'green' : 'red';
+            document.getElementById('statusIndicator').style.backgroundColor = color;
+            document.getElementById('statusIrrigacao').style.color = color;
+            document.getElementById('statusIrrigacao').textContent = status;
+        },
+        error: function(xhr, status, error) {
+            console.log("Erro ao atualizar status:", error);
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    getatualizarStatusIrrigacao();
 });
