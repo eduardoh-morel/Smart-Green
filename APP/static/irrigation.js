@@ -1,8 +1,3 @@
-// Função para atualizar o nível de umidade no display
-function atualizarUmidadeValor(valor) {
-    document.getElementById('umidadeValor').textContent = valor;
-}
-
 // Funções para controle manual da irrigação
 document.getElementById('btnLigarIrrigacao').addEventListener('click', function() {
     const status = 'Ligado';  // Status a ser enviado
@@ -52,4 +47,112 @@ function postAtualizarStatusIrrigacao(status) {
 
 document.addEventListener('DOMContentLoaded', function() {
     getatualizarStatusIrrigacao();
+    atualizarListaAgendamentosIrrigacao();
+    verificarExistenciaDeAgendamentos();
 });
+
+document.getElementById('btnAgendarIrrigacao').addEventListener('click', function() {
+    const horario = document.getElementById('horarioIrrigacao').value;
+    const duracao = document.getElementById('duracaoIrrigacao').value;
+    
+    if (!horario || !duracao) {
+        alert('Por favor, preencha o horário e a duração.');
+        return;
+    }
+
+    $.ajax({
+        url: '/agendarIrrigacao',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ horario: horario, duracao: parseInt(duracao) }),
+        success: function(response) {
+            atualizarListaAgendamentosIrrigacao();
+            verificarExistenciaDeAgendamentos();
+            document.getElementById('horarioIrrigacao').value = '';
+            document.getElementById('duracaoIrrigacao').value = '';
+        },
+        error: function(xhr, status, error) {
+            console.error("Erro ao agendar irrigação:", error);
+        }
+    });
+});
+
+function atualizarListaAgendamentosIrrigacao() {
+    $.ajax({
+        url: '/listarAgendamentos',
+        method: 'GET',
+        success: function(data) {
+            const lista = document.getElementById('listaAgendamentos');
+            lista.innerHTML = '';
+
+            data.agendamentos.forEach((agendamento, index) => {
+                const item = document.createElement('li');
+                item.className = 'list-group-item d-flex justify-content-between align-items-center';
+
+                item.textContent = `Horário: ${agendamento.horario}, Duração: ${agendamento.duracao} minutos`;
+
+                // Botão de lixeira
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'btn btn-danger btn-sm';
+                deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+                deleteButton.onclick = function() {
+                    removerAgendamento(index);
+                };
+
+                item.appendChild(deleteButton);
+                lista.appendChild(item);
+            });
+        },
+        error: function(error) {
+            console.error('Erro ao listar agendamentos:', error);
+        }
+    });
+}
+
+function removerAgendamento(index) {
+    $.ajax({
+        url: `/removerAgendamento/${index}`,
+        method: 'DELETE',
+        success: function(response) {
+            atualizarListaAgendamentosIrrigacao();
+        },
+        error: function(error) {
+            console.error('Erro ao remover agendamento:', error);
+        }
+    });
+}
+
+function atualizarStatusPeriodicamente() {
+    setInterval(function() {
+        $.ajax({
+            url: '/irrigationStatus',
+            method: 'GET',
+            success: function(data) {
+                const status = data.status;
+                const color = status === 'Ligado' ? 'green' : 'red';
+                
+                document.getElementById('statusIndicator').style.backgroundColor = color;
+                document.getElementById('statusIrrigacao').textContent = status;
+                document.getElementById('statusIrrigacao').style.color = color;
+            },
+            error: function(error) {
+                console.error('Erro ao atualizar status de irrigação:', error);
+            }
+        });
+    }, 60000);
+}
+
+function verificarExistenciaDeAgendamentos() {
+    $.ajax({
+        url: '/hasSchedule',
+        method: 'GET',
+        success: function(response) {
+            if (response.has_schedule) {
+                atualizarStatusPeriodicamente();
+            }
+        },
+        error: function(error) {
+            console.error('Erro ao verificar agendamentos:', error);
+        }
+    });
+}
