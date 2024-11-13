@@ -60,19 +60,19 @@ void loop() {
   tempC = tempEvent.temperature;
   humidity = humidityEvent.relative_humidity;
   Serial.print("Temperatura: ");
-  Serial.print(tempC);
-  Serial.println(" C");
+  Serial.println(tempC);
+  //Serial.println(" C");
   Serial.print("Umidade: ");
-  Serial.print(humidity);
-  Serial.println(" %");
+  Serial.println(humidity);
+  //Serial.println(" %");
 
   // Leitura do sensor de CO2 (ENS160)
   ens160.set_envdata(tempC, humidity);
   ens160.measure(true);
   int co2Value = ens160.geteCO2();
   Serial.print("CO2: ");
-  Serial.print(co2Value);
-  Serial.println(" ppm");
+  Serial.println(co2Value);
+  //Serial.println(" ppm");
 
   // Leitura do sensor de umidade do solo
   soilMoistureValue = analogRead(rainPin);
@@ -107,5 +107,5 @@ void loop() {
     digitalWrite(ArduinoLED_Red, LOW);
   }
 
-  delay(5000); // Atraso para a próxima leitura
+  delay(100); // Atraso para a próxima leitura
 }
