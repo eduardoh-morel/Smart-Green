@@ -1,12 +1,12 @@
 // Funções para controle manual da irrigação
 document.getElementById('btnLigarIrrigacao').addEventListener('click', function() {
-    const status = 'Ligado';  // Status a ser enviado
-    postAtualizarStatusIrrigacao(status);  // Chama a função para atualizar o status
+    const status = 'Ligado';
+    postAtualizarStatusIrrigacao(status);
 });
 
 document.getElementById('btnDesligarIrrigacao').addEventListener('click', function() {
-    const status = 'Desligado';  // Status a ser enviado
-    postAtualizarStatusIrrigacao(status);  // Chama a função para atualizar o status
+    const status = 'Desligado';
+    postAtualizarStatusIrrigacao(status);
 });
 
 function getatualizarStatusIrrigacao() {
@@ -196,9 +196,15 @@ function statusIrrigacaoPorNecessidade() {
             document.getElementById('statusIndicatorByNeed').style.backgroundColor = color;
             document.getElementById('statusIrrigacaoByNeed').style.color = color;
             document.getElementById('statusIrrigacaoByNeed').textContent = status;
+            postAtualizarStatusIrrigacao(status);
+
         },
         error: function(error) {
             console.error('Erro ao buscar o status de irrigação:', error);
         }
     });
 }
+
+document.getElementById("refreshStatusIrrigacaoNeedBy").addEventListener("click", function() {
+    statusIrrigacaoPorNecessidade();
+});

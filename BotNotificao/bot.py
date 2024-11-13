@@ -59,6 +59,7 @@ async def verificacaoTemp():
         embed.set_footer(text="Monitoramento de Temperatura")
         
         await channel.send(embed=embed)
+        print("Verificando temperatura")
         await asyncio.sleep(5)
 
 # Verificação de Umidade do Solo
@@ -75,6 +76,7 @@ async def verificacaoUmidadeSolo():
         embed.set_footer(text="Monitoramento de Umidade do Solo")
         
         await channel.send(embed=embed)
+        print("Verificando Solo")
         await asyncio.sleep(5)
 
 # Verificação de CO2

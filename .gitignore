@@ -1,2 +1,4 @@
 /env
-BotNotificao/botKey.py
+botKey.py
+BotNotificao/__pycache__
+APP/__pycache__

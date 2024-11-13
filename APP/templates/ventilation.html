@@ -8,12 +8,12 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Smart Green - Controle de Irrigação</title>
+    <title>Smart Green - Controle de Ventilação</title>
 
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
-    <link href="{{ url_for('static', filename='irrigation.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='ventilation.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
@@ -59,7 +59,7 @@
                 <p></p>
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">Status Irrigação</h1>
+                    <h1 class="h3 mb-0 text-gray-800">Status Ventilação</h1>
                 </div>
 
 
@@ -68,7 +68,7 @@
                     <div class="col-xl-6 col-md-12 mb-4">
                         <div class="card border-left-success shadow h-100 py-2">
                             <div class="card-body">
-                                <h5 class="text-gray-800">Irrigação</h5>
+                                <h5 class="text-gray-800">Ventilação</h5>
                                 <p class="mt-3">
                                     Status:
                                     <span id="statusIndicator"
@@ -84,37 +84,21 @@
                         <div class="card border-left-success shadow h-100 py-2">
                             <div class="card-body">
                                 <h5 class="text-gray-800">Controle Manual</h5>
-                                <p>Ativar ou desativar a irrigação manualmente.</p>
-                                <button class="btn btn-success" id="btnLigarIrrigacao">Ligar</button>
-                                <button class="btn btn-danger" id="btnDesligarIrrigacao">Desligar</button>
+                                <p>Ativar ou desativar a Ventilação manualmente.</p>
+                                <button class="btn btn-success" id="btnLigarVentilacao">Ligar</button>
+                                <button class="btn btn-danger" id="btnDesligarVentilacao">Desligar</button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Seção de Agendamento de Irrigação -->
-                    <div class="col-xl-6 col-md-12 mb-4">
-                        <div class="card border-left-info shadow h-100 py-2">
-                            <div class="card-body">
-                                <h5 class="text-gray-800">Agendar Irrigação</h5>
-                                <p>Defina um horário e duração para irrigação.</p>
-                                <label for="horarioIrrigacao">Horário:</label>
-                                <input type="time" id="horarioIrrigacao" class="form-control mb-2">
-
-                                <label for="duracaoIrrigacao">Duração (minutos):</label>
-                                <input type="number" id="duracaoIrrigacao" class="form-control mb-2">
-
-                                <button class="btn btn-primary mt-2" id="btnAgendarIrrigacao">Agendar</button>
-                            </div>
-                        </div>
-                    </div>
 
                     <!-- Seção de Irrigação por Necessidade -->
                     <div class="col-xl-6 col-md-12 mb-4">
                         <div class="card border-left-info shadow h-100 py-2">
                             <div class="card-body">
-                                <h5 class="text-gray-800">Irrigação por Necessidade</h5>
+                                <h5 class="text-gray-800">Ventilação por Necessidade</h5>
                                 <p>Verificação dos sensores em comparação com os dados desejaveis para identificar a
-                                    ligação da irrigação por necessidade.</p>
+                                    ligação da ventilação por necessidade.</p>
 
                                 <!-- Exibição do Status da Irrigação -->
                                 <div id="statusIrrigacao">
@@ -156,15 +140,7 @@
                         </div>
                     </div>
 
-                    <!-- Lista de Agendamentos -->
-                    <div class="col-xl-12 col-md-12 mb-4">
-                        <div class="card border-left-info shadow h-100 py-2">
-                            <div class="card-body">
-                                <h5 class="text-gray-800">Agendamentos de Irrigação</h5>
-                                <ul id="listaAgendamentos" class="list-group"></ul>
-                            </div>
-                        </div>
-                    </div>
+                
                 </div>
             </div>
         </div>
@@ -173,7 +149,7 @@
     <!-- JavaScript para controle -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="{{ url_for('static', filename='irrigation.js') }}"></script>
+    <script src="{{ url_for('static', filename='ventilation.js') }}"></script>
 </body>
 
 </html>
