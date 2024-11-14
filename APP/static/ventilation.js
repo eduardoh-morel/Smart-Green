@@ -1,22 +1,3 @@
-function postAtualizarStatusVentilacao(status) {
-    $.ajax({
-        url: '/irrigationStatus',
-        method: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({ status: status }),
-        success: function(response) {
-            console.log("Status da irrigação atualizado:", response);
-            const color = status === 'Ligado' ? 'green' : 'red';
-            document.getElementById('statusIndicator').style.backgroundColor = color;
-            document.getElementById('statusIrrigacao').style.color = color;
-            document.getElementById('statusIrrigacao').textContent = status;
-        },
-        error: function(xhr, status, error) {
-            console.log("Erro ao atualizar status:", error);
-        }
-    });
-}
-
 document.getElementById('btnLigarVentilacao').addEventListener('click', function() {
     const status = 'Ligado';
     postAtualizarStatusVentilacao(status);
@@ -25,6 +6,48 @@ document.getElementById('btnLigarVentilacao').addEventListener('click', function
 document.getElementById('btnDesligarVentilacao').addEventListener('click', function() {
     const status = 'Desligado';
     postAtualizarStatusVentilacao(status);
+});
+
+function getatualizarStatusVentilacao() {
+    $.ajax({
+        url: '/ventilationStatus',
+        method: 'GET',
+        success: function(data) {
+            const status = data.status;  // Status vindo do backend
+            const color = status === 'Ligado' ? 'green' : 'red';  // Determina a cor baseada no status
+            document.getElementById('statusIndicatorVentilation').style.backgroundColor = color;
+            document.getElementById('statusVentilation').style.color = color;
+            document.getElementById('statusVentilation').textContent = status;
+        },
+        error: function(error) {
+            console.error('Erro ao buscar o status da ventilação:', error);
+        }
+    });
+}
+
+function postAtualizarStatusVentilacao(status) {
+    $.ajax({
+        url: '/ventilationStatus',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ status: status }),
+        success: function(response) {
+            const color = status === 'Ligado' ? 'green' : 'red';
+            document.getElementById('statusIndicatorVentilation').style.backgroundColor = color;
+            document.getElementById('statusVentilation').style.color = color;
+            document.getElementById('statusVentilation').textContent = status;
+        },
+        error: function(xhr, status, error) {
+            console.log("Erro ao atualizar status:", error);
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    getatualizarStatusVentilacao();
+    statusVentilacaoPorNecessidade();
+    fetchSensorData();
+    updateDesiredValues();
 });
 
 async function fetchSensorData() {
@@ -56,19 +79,19 @@ function updateDesiredValues() {
 
 function statusVentilacaoPorNecessidade() {
     $.ajax({
-        url: '/IrrigationByNeed',
+        url: '/ventilationByNeed',
         method: 'GET',
         success: function(data) {
             const status = data.status;  // Status vindo do backend
             const color = status === 'Ligado' ? 'green' : 'red';  // Determina a cor baseada no status
-            document.getElementById('statusIndicatorByNeed').style.backgroundColor = color;
-            document.getElementById('statusIrrigacaoByNeed').style.color = color;
-            document.getElementById('statusIrrigacaoByNeed').textContent = status;
-            postAtualizarStatusIrrigacao(status);
+            document.getElementById('statusIndicatorByNeedVentilation').style.backgroundColor = color;
+            document.getElementById('statusVentilationByNeed').style.color = color;
+            document.getElementById('statusVentilationByNeed').textContent = status;
+            postAtualizarStatusVentilacao(status);
 
         },
         error: function(error) {
-            console.error('Erro ao buscar o status de irrigação:', error);
+            console.error('Erro ao buscar o status da ventilação:', error);
         }
     });
 }

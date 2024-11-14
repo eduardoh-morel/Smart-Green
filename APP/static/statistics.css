@@ -11269,3 +11269,22 @@
     width: 100%;
   }
   
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%; /* Para ocupar toda a altura da janela */
+    width: 250px; /* Ajuste conforme necessário */
+    z-index: 1000; /* Garante que ela fique acima de outros elementos */
+    overflow-y: auto; /* Permite rolar o conteúdo interno se necessário */
+}
+
+.main-content {
+  margin-left: 250px; /* Igual à largura da sidebar */
+  padding: 20px; /* Espaçamento interno do conteúdo */
+}
+
+.container-fluid {
+  margin-left: 225px;
+  width: 83%;
+}

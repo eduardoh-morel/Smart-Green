@@ -16,7 +16,7 @@ function getatualizarStatusIrrigacao() {
         success: function(data) {
             const status = data.status;  // Status vindo do backend
             const color = status === 'Ligado' ? 'green' : 'red';  // Determina a cor baseada no status
-            document.getElementById('statusIndicator').style.backgroundColor = color;
+            document.getElementById('statusIndicatorIrrigation').style.backgroundColor = color;
             document.getElementById('statusIrrigacao').style.color = color;
             document.getElementById('statusIrrigacao').textContent = status;
         },
@@ -33,9 +33,8 @@ function postAtualizarStatusIrrigacao(status) {
         contentType: 'application/json',
         data: JSON.stringify({ status: status }),
         success: function(response) {
-            console.log("Status da irrigação atualizado:", response);
             const color = status === 'Ligado' ? 'green' : 'red';
-            document.getElementById('statusIndicator').style.backgroundColor = color;
+            document.getElementById('statusIndicatorIrrigation').style.backgroundColor = color;
             document.getElementById('statusIrrigacao').style.color = color;
             document.getElementById('statusIrrigacao').textContent = status;
         },
@@ -134,7 +133,7 @@ function atualizarStatusPeriodicamente() {
                 const status = data.status;
                 const color = status === 'Ligado' ? 'green' : 'red';
                 
-                document.getElementById('statusIndicator').style.backgroundColor = color;
+                document.getElementById('statusIndicatorIrrigation').style.backgroundColor = color;
                 document.getElementById('statusIrrigacao').textContent = status;
                 document.getElementById('statusIrrigacao').style.color = color;
             },
@@ -193,7 +192,7 @@ function statusIrrigacaoPorNecessidade() {
         success: function(data) {
             const status = data.status;  // Status vindo do backend
             const color = status === 'Ligado' ? 'green' : 'red';  // Determina a cor baseada no status
-            document.getElementById('statusIndicatorByNeed').style.backgroundColor = color;
+            document.getElementById('statusIndicatorByNeedIrrigation').style.backgroundColor = color;
             document.getElementById('statusIrrigacaoByNeed').style.color = color;
             document.getElementById('statusIrrigacaoByNeed').textContent = status;
             postAtualizarStatusIrrigacao(status);

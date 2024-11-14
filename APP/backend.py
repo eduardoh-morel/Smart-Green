@@ -9,30 +9,46 @@ from botKey import *
 from datetime import datetime, timedelta
 import RPi.GPIO as GPIO
 
+
 app = Flask(__name__)
 
 serial_port = '/dev/ttyACM0'
 baud_rate = 9600
 
+#Configuracao de Pin 
+
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(2, GPIO.OUT)
-GPIO.setup(4, GPIO.OUT)
+releIn1 = 2  # Define o número do pino do primeiro relé Usado para Irrigacao
+releIn2 = 4  # Define o número do pino do segundo relé Usado para Ventilacao
+GPIO.setup(releIn1, GPIO.OUT)
+GPIO.setup(releIn2, GPIO.OUT)
+
 
 # Configuração do Bot
 intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-def ligarIrrigacao():
-    GPIO.output(2, GPIO.HIGH)
+def ligarReleIrrigacao():
+    GPIO.output(releIn1, GPIO.HIGH)
+    print("Relé de Irrigacao ligado")
 
-def desligarIrrigacao():
-    GPIO.output(2, GPIO.LOW)
+def ligarReleVentilacao():
+    GPIO.output(releIn2, GPIO.HIGH)
+    print("Relé de Ventilacao ligado")
+
+def desligarReleIrrigacao():
+    GPIO.output(releIn1, GPIO.LOW)
+    print("Relé de Irrigacao desligado")
+    
+def desligarReleVentilacao():
+    GPIO.output(releIn2, GPIO.LOW)
+    print("Relé de Ventilacao desligado")
 
 def cleanup_gpio():
     GPIO.cleanup()
     print("Limpeza dos GPIOs realizada.")
-
+    
 # Variaveis dos sensores
 temperatura = None
 umidade = None
@@ -66,7 +82,15 @@ statusIrrigationByNeed = {
     "status": "Desligado",
 }
 
-agendamentos = []
+statusVentilation = {
+    "status": "Desligado",
+}
+
+statusVentilationByNeed = {
+    "status": "Desligado",
+}
+
+agendamentosIrrigacao = []
 
 @app.route('/agendarIrrigacao', methods=['POST'])
 def agendar_irrigacao():
@@ -82,17 +106,17 @@ def agendar_irrigacao():
         "duracao": duracao,
         "status": "Agendado"
     }
-    agendamentos.append(agendamento)
+    agendamentosIrrigacao.append(agendamento)
     return jsonify({"message": "Irrigação agendada com sucesso!"}), 200
 
 @app.route('/listarAgendamentos', methods=['GET'])
 def listar_agendamentos():
-    return jsonify({"agendamentos": agendamentos}), 200
+    return jsonify({"agendamentos": agendamentosIrrigacao}), 200
 
 @app.route('/removerAgendamento/<int:index>', methods=['DELETE'])
 def remover_agendamento(index):
-    if 0 <= index < len(agendamentos):
-        agendamentos.pop(index)
+    if 0 <= index < len(agendamentosIrrigacao):
+        agendamentosIrrigacao.pop(index)
         return jsonify({"message": "Agendamento removido com sucesso!"}), 200
     else:
         return jsonify({"message": "Agendamento não encontrado!"}), 404
@@ -103,7 +127,7 @@ def verificar_agendamentos():
     print("###Iniciando verificação de Agendamentos###")
     while True:
         agora = datetime.now()
-        for agendamento in agendamentos:
+        for agendamento in agendamentosIrrigacao:
             horario_agendamento = datetime.strptime(agendamento['horario'], '%H:%M')
             horario_agendamento = horario_agendamento.replace(year=agora.year, month=agora.month, day=agora.day)
             
@@ -112,7 +136,7 @@ def verificar_agendamentos():
                     statusIrrigation['status'] = "Ligado"
                     agendamento['status'] = "Em execução"
                 print(f"Irrigação ligada para o agendamento: {agendamento['horario']}")
-                ligarIrrigacao()
+                ligarReleIrrigacao()
                 
                 threading.Timer(agendamento['duracao'] * 60, desligar_irrigacao).start()
 
@@ -121,7 +145,7 @@ def verificar_agendamentos():
 def desligar_irrigacao():
     with lock:
         statusIrrigation['status'] = "Desligado"
-    desligarIrrigacao()
+    desligarReleIrrigacao()
     cleanup_gpio()
     print("Irrigação desligada.")
 
@@ -129,7 +153,26 @@ threading.Thread(target=verificar_agendamentos, daemon=True).start()
 
 @app.route('/hasSchedule', methods=['GET'])
 def has_schedule():
-    return jsonify({"has_schedule": len(agendamentos) > 0}), 200
+    return jsonify({"has_schedule": len(agendamentosIrrigacao) > 0}), 200
+
+@app.route('/ventilationStatus', methods=['GET'])
+def get_ventilation_status():
+    print(f"Estado atual da Ventilação: {statusVentilation}")
+    return jsonify(statusVentilation), 200
+
+@app.route('/ventilationStatus', methods=['POST'])
+def update_ventilation_status():
+    data = request.get_json()
+    
+    if 'status' in data:
+        statusVentilation['status'] = data['status']
+        return jsonify({"message": "Status da ventilação atualizado com sucesso!"}), 200
+    else:
+        return jsonify({"message": "Status não fornecido!"}), 400
+
+@app.route('/ventilationByNeed', methods=['GET'])
+def get_ventilation_by_need():
+    return jsonify(statusVentilationByNeed), 200
 
 @app.route('/IrrigationByNeed', methods=['GET'])
 def get_irrigation_by_need():
@@ -268,57 +311,89 @@ async def on_ready():
     bot.loop.create_task(verificacaoUmidadeAr())
  
 
-# Verificação de Temperatura
+# Função de verificação de temperatura
 async def verificacaoTemp():
     channel = bot.get_channel(1300961217845792820)  # ID do canal onde o bot deve enviar a mensagem
 
-    while True: 
-        # Temperatura
-        # Verificacao sendo Feita = Temperatura Atual maior que Desejavel
-        tempDesejavelInt = safe_int(valores_desejaveis.get("temperatura", 0))
-        temperaturaRealInt = safe_int(temperaturaReal) if temperaturaReal is not None else 0
+    try:
+        while True: 
+            # Verificação de Temperatura
+            tempDesejavelInt = safe_int(valores_desejaveis.get("temperatura", 0))
+            temperaturaRealInt = safe_int(temperaturaReal) if temperaturaReal is not None else 0
 
-        if tempDesejavelInt == 0:
-            continue
-        elif temperaturaRealInt > tempDesejavelInt: # Temperatura Atual maior que Desejavel
-            embed = discord.Embed(
-                title="⚠️ Alerta de Temperatura",
-                description="A temperatura atual excedeu o limite desejado.",
-                color=discord.Color.red()
-            )
-            embed.add_field(name="Temperatura Atual", value=f"{temperaturaRealInt}°C", inline=True)
-            embed.add_field(name="Temperatura Desejada", value=f"{tempDesejavelInt}°C", inline=True)
-            embed.set_footer(text="Monitoramento de Temperatura")
-        
-            await channel.send(embed=embed)
-        print("Verificando Temperatura")
-        await asyncio.sleep(30)
+            if tempDesejavelInt != 0 and temperaturaRealInt > tempDesejavelInt:
+                # Liga o relé se a temperatura exceder o limite
+                ligarReleVentilacao()
+                #Status
+                statusVentilation['status'] = "Ligado"
+                statusVentilationByNeed['status'] = "Ligado"
+                
+                # Envio de Mensagem do Bot
+                embed = discord.Embed(
+                    title="⚠️ Alerta de Temperatura",
+                    description="A temperatura atual excedeu o limite desejado.",
+                    color=discord.Color.red()
+                )
+                embed.add_field(name="Temperatura Atual", value=f"{temperaturaRealInt}°C", inline=True)
+                embed.add_field(name="Temperatura Desejada", value=f"{tempDesejavelInt}°C", inline=True)
+                embed.set_footer(text="Monitoramento de Temperatura")
+            
+                await channel.send(embed=embed)
+            
+            else:
+                # Desliga o relé se a temperatura estiver dentro do limite
+                desligarReleVentilacao()
+                #Status
+                statusVentilation['status'] = "Desligado"
+                statusVentilationByNeed['status'] = "Desligado"
+                
+            await asyncio.sleep(60)
+
+    finally:
+        GPIO.cleanup()  # Limpeza do GPIO
         
 
-# Verificação de Umidade do Solo
+# Função de verificação da umidade do solo
 async def verificacaoUmidadeSolo():
-    channel = bot.get_channel(1300961217845792820)
+    channel = bot.get_channel(1300961217845792820)  # ID do canal onde o bot enviará a mensagem
 
-    while True:
-        # Umidade Do Solo
-        # Verificacao sendo Feita = Umidade Solo Atual menor que Desejavel
-        umidadeRealInt = safe_int(umidadeReal) if umidadeReal is not None else 0
-        umidadeDesejavelInt = safe_int(valores_desejaveis.get("umidade", 0))
+    try:
+        while True:
+            # Umidade do Solo
+            umidadeSoloRealInt = safe_int(umidadeSoloReal) if umidadeSoloReal is not None else 0
+            umidadeSoloDesejavelInt = safe_int(valores_desejaveis.get("umidadeSolo", 0))
 
-        if umidadeDesejavelInt == 0:
-            continue
-        elif umidadeRealInt < umidadeDesejavelInt: # Umidade Solo Atual menor que Desejavel
-            embed = discord.Embed(
-                title="⚠️ Alerta de Umidade do Solo",
-                description="A umidade do solo atual está abaixo do limite desejado.",
-                color=discord.Color.gold()
-            )
-            embed.add_field(name="Umidade do Solo Atual", value=f"{umidadeRealInt}%", inline=True)
-            embed.add_field(name="Umidade do Solo Desejada", value=f"{umidadeDesejavelInt}%", inline=True)
-            embed.set_footer(text="Monitoramento de Umidade do Solo")
-        
-            await channel.send(embed=embed)
-        await asyncio.sleep(30)   
+            # Verificação: Umidade do Solo Atual menor que o valor desejável
+            if umidadeSoloDesejavelInt != 0 and umidadeSoloRealInt < umidadeSoloDesejavelInt:
+                # Liga o relé de irrigação se a umidade do solo estiver abaixo do limite
+                ligarReleIrrigacao()  # Liga o relé de irrigação
+                #Status
+                statusIrrigation['status'] = "Ligado"
+                statusIrrigationByNeed['status'] = "Ligado"
+                
+
+                embed = discord.Embed(
+                    title="⚠️ Alerta de Umidade do Solo",
+                    description="A umidade do solo atual está abaixo do limite desejado.",
+                    color=discord.Color.gold()
+                )
+                embed.add_field(name="Umidade do Solo Atual", value=f"{umidadeSoloRealInt}%", inline=True)
+                embed.add_field(name="Umidade do Solo Desejada", value=f"{umidadeSoloDesejavelInt}%", inline=True)
+                embed.set_footer(text="Monitoramento de Umidade do Solo")
+                
+                await channel.send(embed=embed)
+            else:
+                # Desliga o relé de irrigação se a umidade do solo estiver no limite desejado
+                desligarReleIrrigacao()  # Desliga o relé de irrigação
+                #Status
+                statusIrrigation['status'] = "Desligado"
+                statusIrrigationByNeed['status'] = "Desligado"
+                
+
+            await asyncio.sleep(60)  # Verificação a cada 60 segundos
+
+    finally:
+        GPIO.cleanup()  # Limpeza do GPIO 
     
 # Verificação de CO2
 async def verificacaoCO2():
@@ -330,9 +405,7 @@ async def verificacaoCO2():
         co2RealInt = safe_int(co2Real) if co2Real is not None else 0
         co2DesejavelInt = safe_int(valores_desejaveis.get("co2", 0))
         
-        if co2DesejavelInt == 0:
-            continue
-        elif co2RealInt < co2DesejavelInt: # Co2 Atual maior que Desejavel
+        if co2DesejavelInt != 0 and co2RealInt > co2DesejavelInt: # Co2 Atual maior que Desejavel
             embed = discord.Embed(
                 title="⚠️ Alerta de CO2",
                 description="O nível de CO2 atual está acima do limite desejado.",
@@ -343,7 +416,7 @@ async def verificacaoCO2():
             embed.set_footer(text="Monitoramento de CO2")
         
             await channel.send(embed=embed)
-        await asyncio.sleep(30)
+        await asyncio.sleep(60)
 
 # Verificação de Umidade do Ar
 async def verificacaoUmidadeAr():
@@ -352,23 +425,21 @@ async def verificacaoUmidadeAr():
     while True:
         # Umidade do Ar
         # Verificacao sendo Feita = Umidade do Ar Atual Maior que Desejavel
-        umidadeSoloRealInt = safe_int(umidadeSoloReal) if umidadeSoloReal is not None else 0
-        umidadeSoloDesejavelInt = safe_int(valores_desejaveis.get("umidadeSolo", 0))
+        umidadeRealInt = safe_int(umidadeReal) if umidadeReal is not None else 0
+        umidadeDesejavelInt = safe_int(valores_desejaveis.get("umidade", 0))
 
-        if umidadeSoloDesejavelInt == 0:
-            continue
-        elif umidadeSoloRealInt > umidadeSoloDesejavelInt: # Umidade Atual Maior que Desejavel
+        if umidadeDesejavelInt != 0 and umidadeRealInt > umidadeDesejavelInt: # Umidade Atual Maior que Desejavel
             embed = discord.Embed(
                 title="⚠️ Alerta de Umidade do Ar",
                 description="A umidade do ar atual está abaixo do limite desejado.",
                 color=discord.Color.green()
             )
-            embed.add_field(name="Umidade do Ar Atual", value=f"{umidadeSoloRealInt}%", inline=True)
-            embed.add_field(name="Umidade do Ar Desejada", value=f"{umidadeSoloDesejavelInt}%", inline=True)
+            embed.add_field(name="Umidade do Ar Atual", value=f"{umidadeRealInt}%", inline=True)
+            embed.add_field(name="Umidade do Ar Desejada", value=f"{umidadeDesejavelInt}%", inline=True)
             embed.set_footer(text="Monitoramento de Umidade do Ar")
         
             await channel.send(embed=embed)
-        await asyncio.sleep(30)
+        await asyncio.sleep(60)
         
 # Comando de limpeza com divisão em blocos
 @bot.command(name='limpar')

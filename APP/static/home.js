@@ -26,6 +26,7 @@ function updateDesiredValues() {
 
 document.addEventListener('DOMContentLoaded', function() {
     getatualizarStatusIrrigacao();
+    getatualizarStatusVentilacao();
     updateDesiredValues();
     fetchSensorData();
 });
@@ -33,6 +34,12 @@ document.addEventListener('DOMContentLoaded', function() {
 document.getElementById('refreshSensorData').addEventListener('click', async function(event) {
     event.preventDefault();
     fetchSensorData();
+});
+
+document.getElementById('refreshStatusIrrigacaoAndVentilacao').addEventListener('click', async function(event) {
+    event.preventDefault();
+    getatualizarStatusIrrigacao();
+    getatualizarStatusVentilacao();
 });
 
 function validarNumero(event) {
@@ -82,12 +89,29 @@ function getatualizarStatusIrrigacao() {
         success: function(data) {
             const status = data.status;
             const color = status === 'Ligado' ? 'green' : 'red';
-            document.getElementById('statusIndicatorHome').style.backgroundColor = color;
+            document.getElementById('statusIndicatorIrrigacaoHome').style.backgroundColor = color;
             document.getElementById('statusIrrigacaoHome').style.color = color;
             document.getElementById('statusIrrigacaoHome').textContent = status;
         },
         error: function(error) {
             console.error('Erro ao buscar o status de irrigação:', error);
+        }
+    });
+}
+
+function getatualizarStatusVentilacao() {
+    $.ajax({
+        url: '/ventilationStatus',
+        method: 'GET',
+        success: function(data) {
+            const status = data.status;  // Status vindo do backend
+            const color = status === 'Ligado' ? 'green' : 'red';  // Determina a cor baseada no status
+            document.getElementById('statusIndicatorVentilationHome').style.backgroundColor = color;
+            document.getElementById('statusVentilation').style.color = color;
+            document.getElementById('statusVentilation').textContent = status;
+        },
+        error: function(error) {
+            console.error('Erro ao buscar o status da ventilação:', error);
         }
     });
 }

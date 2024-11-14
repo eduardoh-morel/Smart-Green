@@ -62,7 +62,6 @@
                     <h1 class="h3 mb-0 text-gray-800">Status Ventilação</h1>
                 </div>
 
-
                 <div class="row">
                     <!-- Status da Irrigação -->
                     <div class="col-xl-6 col-md-12 mb-4">
@@ -70,10 +69,10 @@
                             <div class="card-body">
                                 <h5 class="text-gray-800">Ventilação</h5>
                                 <p class="mt-3">
-                                    Status:
-                                    <span id="statusIndicator"
+                                    Status: 
+                                    <span id="statusIndicatorVentilation"
                                         style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px;"></span>
-                                    <span id="statusIrrigacao">Desligado</span>
+                                    <span id="statusVentilation">Desligado</span>
                                 </p>
                             </div>
                         </div>
@@ -105,13 +104,13 @@
                                     <p class="mt-3 d-flex justify-content-between align-items-center">
                                         <span>
                                             Status:
-                                            <span id="statusIndicatorByNeed"
+                                            <span id="statusIndicatorByNeedVentilation"
                                                   style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; background-color: red;"></span>
-                                            <span id="statusIrrigacaoByNeed">Desligado</span>
+                                            <span id="statusVentilationByNeed">Desligado</span>
                                         </span>
                                 
                                         <!-- Botão de Refresh -->
-                                        <button id="refreshStatusIrrigacaoNeedBy" class="btn btn-primary">Refresh</button>
+                                        <button id="refreshStatusVentilationNeedBy" class="btn btn-primary">Refresh</button>
                                     </p>
                                 </div>
 
@@ -132,7 +131,7 @@
                                                     id="airHumidityDesirableCurrent"></span> %</p>
                                             <p><strong>CO2 Desejável:</strong> <span id="co2Current"></span> ppm</p>
                                             <p><strong>Umidade do Solo Desejável:</strong> <span
-                                                    id="soilMoistureDesirableCurrent"></span></p>
+                                                    id="soilMoistureDesirableCurrent"></span> %</p>
                                         </div>
                                     </div>
                                 </div>
