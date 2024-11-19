@@ -431,7 +431,7 @@ async def verificacaoUmidadeAr():
         if umidadeDesejavelInt != 0 and umidadeRealInt > umidadeDesejavelInt: # Umidade Atual Maior que Desejavel
             embed = discord.Embed(
                 title="⚠️ Alerta de Umidade do Ar",
-                description="A umidade do ar atual está abaixo do limite desejado.",
+                description="A umidade do ar atual está acima do limite desejado.",
                 color=discord.Color.green()
             )
             embed.add_field(name="Umidade do Ar Atual", value=f"{umidadeRealInt}%", inline=True)
